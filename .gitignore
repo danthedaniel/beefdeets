@@ -1,0 +1,5 @@
+beefdeets.egg-info
+__pycache__
+*.pyc
+*.egg
+*.db
