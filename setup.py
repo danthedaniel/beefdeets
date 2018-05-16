@@ -1,8 +1,10 @@
 from setuptools import setup
+from beefdeets import __version__
+
 
 setup(
     name="beefdeets",
-    version="0.1.0",
+    version=__version__,
     packages=["beefdeets"],
     include_package_data=True,
     install_requires=[

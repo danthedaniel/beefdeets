@@ -1,12 +1,10 @@
 """EFT Version Site."""
 
-import os
 import io
-from datetime import datetime
 from functools import wraps
-from typing import Callable, Any
+from typing import Callable
 
-from flask import Flask, render_template, jsonify, g, send_file
+from flask import Flask, render_template, jsonify, send_file
 from werkzeug.wrappers import Response
 
 from .deadbeef import Player, ACTIONS
@@ -60,6 +58,7 @@ def now_playing():
             "length"
         )
     )
+
 
 @app.route("/player/version.json")
 def version():

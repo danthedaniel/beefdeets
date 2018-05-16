@@ -1,9 +1,9 @@
+"""Interface to DeaDBeeF via it's CLI."""
+
 import re
 from subprocess import check_output, call
 from os import devnull
-from functools import wraps
-from typing import Dict, Callable, List, Union, Optional, Tuple
-from copy import copy
+from typing import Dict, Callable, List, Optional, Tuple
 
 from mutagen import File
 
