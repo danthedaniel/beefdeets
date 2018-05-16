@@ -2,7 +2,7 @@ import re
 from subprocess import check_output, call
 from os import devnull
 from functools import wraps
-from typing import Dict, Callable, List, Union, Optional
+from typing import Dict, Callable, List, Union, Optional, Tuple
 from copy import copy
 
 from mutagen import File
@@ -102,7 +102,6 @@ class Player(object):
 
         Arguments
         ---------
-        path : Path to the deadbeef executable.
         attrs : Attributes to query for.
 
         Returns
@@ -127,6 +126,20 @@ class Player(object):
         else:
             return dict(zip(attrs, result[1:].split("::")))
 
+    def now_playing_values(self, *attrs: str) -> Tuple[str, ...]:
+        """Get ordered values correspondant to the attributes requested.
+
+        Arguments
+        ---------
+        attrs : Attributes to query for.
+
+        Returns
+        -------
+        Corresponding values.
+        """
+        attrs_dict = self.now_playing(*attrs)
+        return tuple([attrs_dict[x] for x in attrs])
+
     def enqueue(self, songs: List[str]) -> bool:
         """Add a list of songs to the play queue.
 
@@ -145,13 +158,13 @@ class Player(object):
 
     def album_cover(self) -> Optional[bytes]:
         """Get the current song's album cover."""
-        attrs = self.now_playing("full_path", "full_dir")
-        path = attrs["full_path"]
-        directory = attrs["full_dir"]
+        path, directory = self.now_playing_values("full_path", "full_dir")
 
+        # First try to get the album cover from the media tags. Failing that,
+        # search for a cover.jpg image in the same directory as the song.
         try:
             return File(path).tags["APIC:"].data
-        except KeyError:
+        except (KeyError, AttributeError):
             try:
                 return open(directory + "/cover.jpg", "rb").read()
             except FileNotFoundError:

@@ -62,7 +62,7 @@ def now_playing():
     )
 
 @app.route("/player/version.json")
-def version() -> Response:
+def version():
     """Get the player version."""
     return jsonify({"version": app.config["player"].version()})
 
@@ -70,7 +70,8 @@ def version() -> Response:
 @app.route("/player/album_cover.jpg")
 def album_cover():
     """Get the current song's album cover."""
-    image = io.BytesIO(app.config["player"].album_cover())
+    cover = app.config["player"].album_cover()
+    image = io.BytesIO(cover) if cover else "static/no_cover.jpg"
     return send_file(image, mimetype="image/jpeg")
 
 
