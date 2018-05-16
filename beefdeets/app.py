@@ -1,11 +1,15 @@
 """EFT Version Site."""
 
-from flask import Flask, render_template, jsonify, g
 import os
+import io
 from datetime import datetime
 from functools import wraps
 from typing import Callable, Any
-from .deadbeef import Player, SIMPLE_METHODS
+
+from flask import Flask, render_template, jsonify, g, send_file
+from werkzeug.wrappers import Response
+
+from .deadbeef import Player, ACTIONS
 
 
 app = Flask(__name__)
@@ -14,24 +18,26 @@ app.config.update(dict(
 ))
 
 
-def statusify(func: Callable[[], bool]) -> Callable[[], Any]:
+def status(response: Response, status_code: int) -> Response:
+    """Set the status code for a response."""
+    response.status_code = status_code
+    return response
+
+
+def statusify(func: Callable[[], bool]) -> Callable[[], Response]:
+    """Wrap a function to transform a boolean to a JSON status response."""
     @wraps(func)
-    def _wrapper():
+    def _wrapper() -> Response:
         try:
-            command_ret = func()
+            success = func()
             response = jsonify({
-                "status": "ok" if command_ret == 0 else "error",
-                "msg": "Success"
+                "status": "ok" if success else "error",
+                "msg": ""
             })
-
-            if command_ret != 0:
-                response.status_code = 500
-
-            return response
+            return response if success else status(response, 500)
         except Exception as e:
-            response = jsonify({"status": "error", "msg": str(e)})
-            response.status_code = 500
-            return response
+            print(e)
+            return status(jsonify({"status": "error", "msg": str(e)}), 500)
 
     return _wrapper
 
@@ -55,25 +61,32 @@ def now_playing():
         )
     )
 
-
 @app.route("/player/version.json")
-def version():
+def version() -> Response:
     """Get the player version."""
     return jsonify({"version": app.config["player"].version()})
 
 
-for method in SIMPLE_METHODS.keys():
-    def _route() -> bool:
-        """Perform the player {} action.""".format(method)
-        return getattr(app.config["player"], method)()
+@app.route("/player/album_cover.jpg")
+def album_cover():
+    """Get the current song's album cover."""
+    image = io.BytesIO(app.config["player"].album_cover())
+    return send_file(image, mimetype="image/jpeg")
 
-    # Set the function name so Flask doesn't have any name collisions
-    _route.__name__ = method
-    # Manually apply decorators because of the above renaming
-    route = statusify(_route)
-    route = app.route("/player/{}.json".format(method), methods=["PATCH"])(route)
 
-    locals()[method] = route
+for method in ACTIONS.keys():
+    def _make_route(method: str) -> Callable[[], Response]:
+        def _route() -> bool:
+            """Perform the player {} action.""".format(method)
+            return getattr(app.config["player"], method)(app.config["player"])
+
+        # Set the function name so Flask doesn't have any name collisions
+        _route.__name__ = method
+        # Manually apply decorators because of the above renaming
+        route = statusify(_route)
+        return app.route("/player/{}.json".format(method), methods=["PATCH"])(route)
+
+    locals()[method] = _make_route(method)
 
 
 if __name__ == "__main__":

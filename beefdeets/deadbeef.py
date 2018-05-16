@@ -1,16 +1,20 @@
+import re
 from subprocess import check_output, call
 from os import devnull
 from functools import wraps
-from typing import Dict, Callable, List
+from typing import Dict, Callable, List, Union, Optional
+from copy import copy
+
+from mutagen import File
 
 
 def arg_to_method(arg: str) -> str:
-    """Convert a DEADBEEF argument to a method name."""
+    """Convert a DeaDBeeF argument to a method name."""
     return arg.replace("--", "").replace("-", "_")
 
 
 def ok(ret_code: int) -> bool:
-    """Convert a UNIX return code to a boolean."""
+    """Convert a posix exit code to a boolean."""
     return ret_code == 0
 
 
@@ -49,43 +53,52 @@ SINGLE_ARG_COMMANDS = [
     "--stop",
     "--play-pause"
 ]
-SIMPLE_METHODS = {arg_to_method(arg): arg for arg in SINGLE_ARG_COMMANDS}
+ACTIONS = {arg_to_method(arg): arg for arg in SINGLE_ARG_COMMANDS}
 
 
 class Player(object):
-    """A DEADBEEF music player."""
+    """A DeaDBeeF music player."""
 
     def __init__(self, path: str) -> None:
         """Initialize a Player.
 
         Arguments
         ---------
-        path : Path to the DEADBEEF executable.
+        path : Path to the DeaDBeeF executable.
         """
         self.path = path
 
         # Add in commands that are just a single CLI argument
-        for method_name, arg in SIMPLE_METHODS.items():
-            def _method(self: Player) -> bool:
-                """Perform the {} DEADBEEF CLI command.
+        for method_name, arg in ACTIONS.items():
+            def _make_method(method_name: str, arg: str) -> Callable[[Player], bool]:
+                def _method(self: Player) -> bool:
+                    """Perform the {} DeaDBeeF CLI command.
 
-                Returns
-                -------
-                Whether the command executed successfully.
-                """.format(arg)
-                return ok(call(
-                    args=[self.path, arg],
-                    stderr=open("/dev/null", "w")
-                ))
-            _method.__name__ = method_name
-            setattr(self, method_name, _method)
+                    Returns
+                    -------
+                    Whether the command executed successfully.
+                    """.format(arg)
+                    return ok(call(
+                        args=[self.path, arg],
+                        stderr=open(devnull, "w")
+                    ))
+
+                _method.__name__ = method_name
+                return _method
+
+            setattr(self, method_name, _make_method(method_name, arg))
 
     def version(self) -> str:
-        """Get the DEADBEEF version."""
-        return self.now_playing("version")["version"]
+        """Get the DeaDBeeF version."""
+        result: str = check_output(
+            args=[self.path, "--version"],
+            stderr=open(devnull, "w")
+        ).decode("utf-8")
+        match = re.match(r"DeaDBeeF (\d+\.\d+\.\d+)", result)
+        return match.groups()[0] if match else ""
 
     def now_playing(self, *attrs: str) -> Dict[str, str]:
-        """Get information on DEADBEEF's currently playing track and playlist.
+        """Get information on DeaDBeeF's currently playing track and playlist.
 
         Arguments
         ---------
@@ -99,7 +112,7 @@ class Player(object):
         if len(attrs) == 0:
             return {}
 
-        format_string = "::".join([
+        format_string = "$" + "::".join([
             "%{}".format(FORMAT_STRINGS[attr])
             for attr in attrs
         ])
@@ -107,7 +120,12 @@ class Player(object):
             args=[self.path, "--nowplaying", format_string],
             stderr=open(devnull, "w")
         ).decode("utf-8")
-        return dict(zip(attrs, result.split("::")))
+
+        if result[0] != "$":
+            # An error occured
+            return {}
+        else:
+            return dict(zip(attrs, result[1:].split("::")))
 
     def enqueue(self, songs: List[str]) -> bool:
         """Add a list of songs to the play queue.
@@ -122,5 +140,19 @@ class Player(object):
         """
         return ok(call(
             args=[self.path, "--queue", *songs],
-            stderr=open("/dev/null", "w")
+            stderr=open(devnull, "w")
         ))
+
+    def album_cover(self) -> Optional[bytes]:
+        """Get the current song's album cover."""
+        attrs = self.now_playing("full_path", "full_dir")
+        path = attrs["full_path"]
+        directory = attrs["full_dir"]
+
+        try:
+            return File(path).tags["APIC:"].data
+        except KeyError:
+            try:
+                return open(directory + "/cover.jpg", "rb").read()
+            except FileNotFoundError:
+                return None
