@@ -2,7 +2,7 @@
 
 import re
 from subprocess import check_output, call
-from os import devnull
+from os import devnull, listdir
 from types import MethodType
 from typing import Dict, Callable, List, Union, Optional, Tuple, Type
 from copy import copy
@@ -164,15 +164,29 @@ class Player(object):
 
     def album_cover(self) -> Optional[bytes]:
         """Get the current song's album cover."""
-        @catch(KeyError, AttributeError)
+        @catch(AttributeError)
         def from_tags(path: str) -> Optional[bytes]:
             """Get an album cover from a file's meta tags."""
-            return File(path).tags["APIC:"].data
+            file = File(path)
 
-        @catch(FileNotFoundError)
-        def from_jpeg(directory: str) -> Optional[bytes]:
+            for tag in file.keys():
+                if tag.startswith("APIC:"):
+                    return file.tags[tag].data
+
+            return None
+
+        @catch(IndexError, AttributeError)
+        def from_pics(path: str) -> Optional[bytes]:
+            """Get an album cover from a file's picture metadata."""
+            return File(path).pictures[0].data
+
+        def from_dir(directory: str) -> Optional[bytes]:
             """Get an album cover from a folder's cover.jpg."""
-            return open(directory + "/cover.jpg", "rb").read()
+            for file in listdir(directory):
+                if file.lower() == "cover.jpg" or file.lower() == "cover.jpeg":
+                    return open(directory + "/" + file, "rb").read()
+
+            return None
 
         path, directory = self.now_playing_values("full_path", "full_dir")
-        return from_tags(path) or from_jpeg(directory)
+        return from_tags(path) or from_pics(path) or from_dir(directory)

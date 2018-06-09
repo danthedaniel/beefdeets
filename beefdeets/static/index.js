@@ -29,6 +29,7 @@
     }
 
     now_playing.textContent = new_title;
+    document.title = new_title + " | BeeFDeetS"
   };
 
   var timestamp_seconds = function(timestamp) {
