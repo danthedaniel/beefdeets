@@ -76,18 +76,18 @@ def album_cover():
 
 
 for method in ACTIONS.keys():
-    def _make_route(method: str) -> Callable[[], Response]:
+    def _make_route(method):
         def _route() -> bool:
             """Perform the player {} action.""".format(method)
-            return getattr(app.config["player"], method)(app.config["player"])
+            return getattr(app.config["player"], method)()
 
         # Set the function name so Flask doesn't have any name collisions
         _route.__name__ = method
         # Manually apply decorators because of the above renaming
         route = statusify(_route)
-        return app.route("/player/{}.json".format(method), methods=["PATCH"])(route)
+        app.route("/player/{}.json".format(method), methods=["PATCH"])(route)
 
-    locals()[method] = _make_route(method)
+    _make_route(method)
 
 
 if __name__ == "__main__":

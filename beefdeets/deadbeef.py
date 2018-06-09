@@ -1,11 +1,13 @@
 import re
 from subprocess import check_output, call
 from os import devnull
-from functools import wraps
-from typing import Dict, Callable, List, Union, Optional, Tuple
+from types import MethodType
+from typing import Dict, Callable, List, Union, Optional, Tuple, Type
 from copy import copy
 
 from mutagen import File
+
+from .helpers import catch
 
 
 def arg_to_method(arg: str) -> str:
@@ -84,7 +86,7 @@ class Player(object):
                     ))
 
                 _method.__name__ = method_name
-                return _method
+                return MethodType(_method, self)
 
             setattr(self, method_name, _make_method(method_name, arg))
 
@@ -108,10 +110,13 @@ class Player(object):
         -------
         Dictionary relating attribute titles to values.
         """
+        SENTINEL = "$"
+        DIVIDER = "::"
+
         if len(attrs) == 0:
             return {}
 
-        format_string = "$" + "::".join([
+        format_string = SENTINEL + DIVIDER.join([
             "%{}".format(FORMAT_STRINGS[attr])
             for attr in attrs
         ])
@@ -120,11 +125,10 @@ class Player(object):
             stderr=open(devnull, "w")
         ).decode("utf-8")
 
-        if result[0] != "$":
-            # An error occured
+        if not result.startswith(SENTINEL):  # An error occured
             return {}
-        else:
-            return dict(zip(attrs, result[1:].split("::")))
+
+        return dict(zip(attrs, result[len(SENTINEL):].split(DIVIDER)))
 
     def now_playing_values(self, *attrs: str) -> Tuple[str, ...]:
         """Get ordered values correspondant to the attributes requested.
@@ -158,14 +162,15 @@ class Player(object):
 
     def album_cover(self) -> Optional[bytes]:
         """Get the current song's album cover."""
-        path, directory = self.now_playing_values("full_path", "full_dir")
-
-        # First try to get the album cover from the media tags. Failing that,
-        # search for a cover.jpg image in the same directory as the song.
-        try:
+        @catch(KeyError, AttributeError)
+        def from_tags(path: str) -> Optional[bytes]:
+            """Get an album cover from a file's meta tags."""
             return File(path).tags["APIC:"].data
-        except (KeyError, AttributeError):
-            try:
-                return open(directory + "/cover.jpg", "rb").read()
-            except FileNotFoundError:
-                return None
+
+        @catch(FileNotFoundError)
+        def from_jpeg(directory: str) -> Optional[bytes]:
+            """Get an album cover from a folder's cover.jpg."""
+            return open(directory + "/cover.jpg", "rb").read()
+
+        path, directory = self.now_playing_values("full_path", "full_dir")
+        return from_tags(path) or from_jpeg(directory)
