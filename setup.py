@@ -8,7 +8,7 @@ setup(
     packages=["beefdeets"],
     include_package_data=True,
     install_requires=[
-        "flask==0.12.2",
+        "flask==1.0.2",
         "mutagen==1.40.0"
     ]
 )
