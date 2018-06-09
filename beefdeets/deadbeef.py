@@ -1,3 +1,5 @@
+"""Interface to DeaDBeeF via it's CLI."""
+
 import re
 from subprocess import check_output, call
 from os import devnull
