@@ -18,16 +18,17 @@
 
   var set_cover = function() {
     // Add cache-breaker to URL to force a redownload
-    album_cover.src = "/player/album_cover.jpg?" + new Date().getTime();;
+    album_cover.src = "/player/album_cover.jpg?" + new Date().getTime();
   };
 
   var set_title = function(attrs) {
     var new_title = attrs["album"] + " - \"" + attrs["title"] + "\" by " + attrs["artist"];
-    now_playing.textContent = new_title;
 
     if (now_playing.textContent != new_title) {
       set_cover();
     }
+
+    now_playing.textContent = new_title;
   };
 
   var timestamp_seconds = function(timestamp) {
@@ -73,22 +74,13 @@
     }
   };
 
-  var button_actions = {
-    "prev-button": API.previous,
-    "play-button": API.play_pause,
-    "next-button": API.next
-  };
   var now_playing = document.getElementById("now-playing");
   var progress_bar = document.getElementById("progress");
   var album_cover = document.getElementById("cover");
 
-  for (var button in button_actions) {
-    if (button_actions.hasOwnProperty(button)) {
-      document.getElementById(button).onclick = function(event) {
-        button_actions[button]();
-      };
-    }
-  }
+  document.getElementById("prev-button").onclick = function() { API.previous() };
+  document.getElementById("play-button").onclick = function() { API.play_pause() };
+  document.getElementById("next-button").onclick = function() { API.next() };
 
   setInterval(function() {
     API.now_playing(set_all);
