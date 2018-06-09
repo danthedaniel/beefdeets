@@ -14,14 +14,13 @@
       </div>
       <div class="card-body">
         <img id="cover" src="/player/album_cover.jpg" />
-        <br />
-        <div class="btn-group" role="group" aria-label="Basic example">
+        <div id="controls" class="btn-group" role="group" aria-label="Basic example">
           <button id="prev-button" class="btn btn-secondary">Prev</button>
           <button id="play-button" class="btn btn-primary">Play/Pause</button>
           <button id="next-button" class="btn btn-secondary">Next</button>
         </div>
       </div>
-      <div class="card-footer text-muted">
+      <div class="card-footer">
         <div class="progress">
           <div id="progress"
             class="progress-bar"
@@ -30,7 +29,7 @@
         </div>
       </div>
     </div>
-</div>
+  </div>
   <script type="text/javascript" src="{{ url_for('static', filename='index.js') }}">
   </script>
 </body>
