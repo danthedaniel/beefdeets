@@ -35,7 +35,7 @@ def statusify(func: Callable[[], bool]) -> Callable[[], Response]:
             })
             return response if success else status(response, 500)
         except Exception as e:
-            print(e)
+            app.logger.error(e)
             return status(jsonify({"status": "error", "msg": str(e)}), 500)
 
     return _wrapper
@@ -44,7 +44,12 @@ def statusify(func: Callable[[], bool]) -> Callable[[], Response]:
 @app.route("/")
 def index():
     """Index route."""
-    return render_template("index.html")
+    artist, title, album = app.config["player"].now_playing_values(
+        "artist",
+        "title",
+        "album"
+    )
+    return render_template("index.html", title=f"{album} - \"{title}\" by {artist}")
 
 
 @app.route("/player/now_playing.json")
@@ -86,6 +91,6 @@ for method in ACTIONS.keys():
         _route.__name__ = method
         # Manually apply decorators because of the above renaming
         route = statusify(_route)
-        app.route("/player/{}.json".format(method), methods=["PATCH"])(route)
+        app.route(f"/player/{method}.json", methods=["PATCH"])(route)
 
     _make_route(method)

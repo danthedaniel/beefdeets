@@ -21,7 +21,6 @@
   var ajax = function(method, url, success, error) {
     var request = new XMLHttpRequest();
     request.open(method, url, true);
-
     request.onload = function() {
       if (request.status >= 200 && request.status < 400) {
         if (success) {
@@ -31,7 +30,6 @@
         error(request);
       }
     };
-
     request.send();
   };
 
@@ -56,7 +54,7 @@
     }
 
     now_playing.textContent = new_title;
-    document.title = new_title + " | BeeFDeetS";
+    document.title = new_title;
   };
 
   /**
@@ -88,7 +86,7 @@
   var set_progress = function(attrs) {
     var percent = timestamp_seconds(attrs.playback_pos) / timestamp_seconds(attrs.length) * 100;
     // progress_bar.textContent = "(" + attrs.playback_pos + " / " + attrs.length + ")";
-    progress_bar.style.width = percent + "%"
+    progress_bar.style.width = percent + "%";
   };
 
   /**

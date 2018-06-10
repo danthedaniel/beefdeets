@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-  <title>BeeF DeetS</title>
+  <title>{{ title }}</title>
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap.min.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
   <link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
@@ -10,7 +10,7 @@
   <div id="main" class="container-fluid">
     <div id="display-card" class="card text-center">
       <div class="card-header">
-        <div id="now-playing">Placeholder</div>
+        <div id="now-playing">{{ title }}</div>
       </div>
       <div class="card-body">
         <img id="cover" src="/player/album_cover.jpg" />

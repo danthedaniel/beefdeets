@@ -76,12 +76,12 @@ class Player(object):
         for method_name, arg in ACTIONS.items():
             def _make_method(method_name: str, arg: str) -> Callable[[], bool]:
                 def _method(self: Player) -> bool:
-                    """Perform the {} DeaDBeeF CLI command.
+                    f"""Perform the {arg} DeaDBeeF CLI command.
 
                     Returns
                     -------
                     Whether the command executed successfully.
-                    """.format(arg)
+                    """
                     return ok(call(
                         args=[self.path, arg],
                         stderr=open(devnull, "w")
@@ -119,7 +119,7 @@ class Player(object):
             return {}
 
         format_string = SENTINEL + DIVIDER.join([
-            "%{}".format(FORMAT_STRINGS[attr])
+            f"%{FORMAT_STRINGS[attr]}"
             for attr in attrs
         ])
         result: str = check_output(
