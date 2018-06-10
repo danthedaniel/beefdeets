@@ -8,6 +8,7 @@ from flask import Flask, render_template, jsonify, send_file
 from werkzeug.wrappers import Response
 
 from .deadbeef import Player, ACTIONS
+from .helpers import nocache
 
 
 app = Flask(__name__)
@@ -67,6 +68,7 @@ def version():
 
 
 @app.route("/player/album_cover.jpg")
+@nocache
 def album_cover():
     """Get the current song's album cover."""
     cover = app.config["player"].album_cover()
