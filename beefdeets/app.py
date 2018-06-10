@@ -75,7 +75,7 @@ def album_cover():
 
 
 for method in ACTIONS.keys():
-    def _make_route(method):
+    def _make_route(method: str) -> None:
         def _route() -> bool:
             """Perform the player {} action.""".format(method)
             return getattr(app.config["player"], method)()
@@ -87,7 +87,3 @@ for method in ACTIONS.keys():
         app.route("/player/{}.json".format(method), methods=["PATCH"])(route)
 
     _make_route(method)
-
-
-if __name__ == "__main__":
-    app.run()

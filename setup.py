@@ -10,5 +10,6 @@ setup(
     install_requires=[
         "flask==1.0.2",
         "mutagen==1.40.0"
-    ]
+    ],
+    python_requires='>3.6'
 )

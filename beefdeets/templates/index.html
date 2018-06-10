@@ -15,17 +15,23 @@
       <div class="card-body">
         <img id="cover" src="/player/album_cover.jpg" />
         <div id="controls" class="btn-group" role="group" aria-label="Basic example">
-          <button id="prev-button" class="btn btn-secondary">Prev</button>
-          <button id="play-button" class="btn btn-primary">Play/Pause</button>
-          <button id="next-button" class="btn btn-secondary">Next</button>
+          <button id="prev-button" class="btn btn-secondary">
+            <img class="glyph" src="{{ url_for('static', filename="svg/si-glyph-leftwards-arrow-to-bar.svg")}}" />
+          </button>
+          <button id="pause-button" class="btn btn-warning">
+            <img class="glyph" src="{{ url_for('static', filename="svg/si-glyph-pause.svg")}}" />
+          </button>
+          <button id="play-button" class="btn btn-primary">
+            <img class="glyph" src="{{ url_for('static', filename="svg/si-glyph-triangle-right.svg")}}" />
+          </button>
+          <button id="next-button" class="btn btn-secondary">
+            <img class="glyph" src="{{ url_for('static', filename="svg/si-glyph-rightwards-arrow-to-bar.svg")}}" />
+          </button>
         </div>
       </div>
       <div class="card-footer">
         <div class="progress">
-          <div id="progress"
-            class="progress-bar"
-            style="width: 0%;">
-          </div>
+          <div id="progress" class="progress-bar" style="width: 0%;"></div>
         </div>
       </div>
     </div>

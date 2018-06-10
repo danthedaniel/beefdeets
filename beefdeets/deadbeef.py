@@ -74,7 +74,7 @@ class Player(object):
 
         # Add in commands that are just a single CLI argument
         for method_name, arg in ACTIONS.items():
-            def _make_method(method_name: str, arg: str) -> Callable[[Player], bool]:
+            def _make_method(method_name: str, arg: str) -> Callable[[], bool]:
                 def _method(self: Player) -> bool:
                     """Perform the {} DeaDBeeF CLI command.
 
