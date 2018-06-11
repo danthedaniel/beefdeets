@@ -63,18 +63,13 @@
    * @param {string} timestamp - String in H:MM:SS or MM:SS format.
    */
   var timestamp_seconds = function(timestamp) {
-    var matches = /^(?:(?<hours>\d+):)?(?<minutes>\d+):(?<seconds>\d+)$/.
+    var groups = /^(?:(\d+):)?(\d+):(\d+)$/.
       exec(timestamp);
 
-    if (matches) {
-      var groups = matches.groups;
-      if (!groups.hours) {
-        groups.hours = "0";
-      }
-
-      return parseInt(groups.hours) * 3600 +
-        parseInt(groups.minutes) * 60 +
-        parseInt(groups.seconds);
+    if (groups) {
+      return parseInt(groups[1] || "0") * 3600 +
+        parseInt(groups[2]) * 60 +
+        parseInt(groups[3]);
     }
   };
 
@@ -84,7 +79,9 @@
    * @param {Object} attrs - "Now Playing" parameters.
    */
   var set_progress = function(attrs) {
-    var percent = timestamp_seconds(attrs.playback_pos) / timestamp_seconds(attrs.length) * 100;
+    var percent = 100 * (
+      timestamp_seconds(attrs.playback_pos) / timestamp_seconds(attrs.length)
+    );
     // progress_bar.textContent = "(" + attrs.playback_pos + " / " + attrs.length + ")";
     progress_bar.style.width = percent + "%";
   };
