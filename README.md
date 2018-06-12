@@ -3,6 +3,11 @@ beefdeets
 
 A web UI for DeaDBeeF.
 
+Supports Python 3.6+.
+
+Application can be ran with `run.sh` or `python -m beefdeets` if installed as a
+package.
+
 ## Screenshots
 
 ![Screenshot](example/beefdeets.png?raw=true)

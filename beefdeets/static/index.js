@@ -47,7 +47,11 @@
    * @param {Object} attrs - "Now Playing" parameters.
    */
   var set_title = function(attrs) {
-    var new_title = attrs.album + " - \"" + attrs.title + "\" by " + attrs.artist;
+    if (!attrs.album && !attrs.title && !attrs.artist) {
+        var new_title = "BeeFDeetS";
+    } else {
+        var new_title = attrs.album + " - \"" + attrs.title + "\" by " + attrs.artist;
+    }
 
     if (now_playing.textContent != new_title) {
       set_cover();
@@ -82,7 +86,7 @@
       timestamp_seconds(attrs.playback_pos) / timestamp_seconds(attrs.length)
     );
     // progress_bar.textContent = "(" + attrs.playback_pos + " / " + attrs.length + ")";
-    progress_bar.style.width = percent + "%";
+    progress_bar.style.width = (percent || 0) + "%";
   };
 
   /**
