@@ -1,3 +1,0 @@
-graft eftversion/templates
-graft eftversion/static
-include eftversion/schema.sql

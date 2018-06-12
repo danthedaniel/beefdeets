@@ -63,8 +63,7 @@
    * @param {string} timestamp - String in H:MM:SS or MM:SS format.
    */
   var timestamp_seconds = function(timestamp) {
-    var groups = /^(?:(\d+):)?(\d+):(\d+)$/.
-      exec(timestamp);
+    var groups = /^(?:(\d+):)?(\d+):(\d+)$/.exec(timestamp);
 
     if (groups) {
       return parseInt(groups[1] || "0") * 3600 +

@@ -4,7 +4,7 @@ import re
 from subprocess import check_output, call
 from os import devnull, listdir
 from types import MethodType
-from typing import Dict, Callable, List, Union, Optional, Tuple, Type
+from typing import Dict, Callable, List, Union, Optional, Tuple, Set
 from copy import copy
 
 from mutagen import File
@@ -164,7 +164,6 @@ class Player(object):
 
     def album_cover(self) -> Optional[bytes]:
         """Get the current song's album cover."""
-        @catch(AttributeError)
         def from_tags(path: str) -> Optional[bytes]:
             """Get an album cover from a file's meta tags."""
             file = File(path)
@@ -176,7 +175,7 @@ class Player(object):
             return None
 
         @catch(IndexError, AttributeError)
-        def from_pics(path: str) -> Optional[bytes]:
+        def from_pics(path: str) -> bytes:
             """Get an album cover from a file's picture metadata."""
             return File(path).pictures[0].data
 
@@ -184,7 +183,7 @@ class Player(object):
             """Get an album cover from a folder's cover.jpg."""
             for file in listdir(directory):
                 if file.lower() in ["cover.jpg", "cover.jpeg"]:
-                    return open(directory + "/" + file, "rb").read()
+                    return open(f"{directory}/{file}", "rb").read()
 
             return None
 

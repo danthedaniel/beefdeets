@@ -4,3 +4,8 @@ __pycache__
 *.pyc
 *.egg
 *.db
+MANIFEST.in
+python
+.python-version
+build/
+dist/

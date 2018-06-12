@@ -1,4 +1,4 @@
-"""EFT Version Site."""
+"""BeeFDeetS web application."""
 
 import io
 from functools import wraps
@@ -84,7 +84,7 @@ def album_cover():
 for method in ACTIONS.keys():
     def _make_route(method: str) -> None:
         def _route() -> bool:
-            """Perform the player {} action.""".format(method)
+            f"""Perform the player {method} action."""
             return getattr(app.config["player"], method)()
 
         # Set the function name so Flask doesn't have any name collisions

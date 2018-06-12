@@ -2,9 +2,9 @@
 <html>
 <head>
   <title>{{ title }}</title>
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap.min.css') }}">
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
-  <link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="bootstrap.min.css") }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="styles.css") }}">
+  <link rel="shortcut icon" type="image/x-icon" href="{{ url_for("static", filename="favicon.ico") }}">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
@@ -17,16 +17,16 @@
         <img id="cover" src="/player/album_cover.jpg" />
         <div id="controls" class="btn-group" role="group" aria-label="Basic example">
           <button id="prev-button" class="btn btn-secondary">
-            <img class="glyph" src="{{ url_for('static', filename="svg/si-glyph-leftwards-arrow-to-bar.svg")}}" />
+            <img class="glyph" src="{{ url_for("static", filename="svg/si-glyph-leftwards-arrow-to-bar.svg") }}" />
           </button>
           <button id="pause-button" class="btn btn-warning">
-            <img class="glyph" src="{{ url_for('static', filename="svg/si-glyph-pause.svg")}}" />
+            <img class="glyph" src="{{ url_for("static", filename="svg/si-glyph-pause.svg") }}" />
           </button>
           <button id="play-button" class="btn btn-primary">
-            <img class="glyph" src="{{ url_for('static', filename="svg/si-glyph-triangle-right.svg")}}" />
+            <img class="glyph" src="{{ url_for("static", filename="svg/si-glyph-triangle-right.svg") }}" />
           </button>
           <button id="next-button" class="btn btn-secondary">
-            <img class="glyph" src="{{ url_for('static', filename="svg/si-glyph-rightwards-arrow-to-bar.svg")}}" />
+            <img class="glyph" src="{{ url_for("static", filename="svg/si-glyph-rightwards-arrow-to-bar.svg") }}" />
           </button>
         </div>
       </div>
@@ -37,7 +37,7 @@
       </div>
     </div>
   </div>
-  <script type="text/javascript" src="{{ url_for('static', filename='index.js') }}">
+  <script type="text/javascript" src="{{ url_for("static", filename="index.js") }}">
   </script>
 </body>
 </html>
