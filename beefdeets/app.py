@@ -8,7 +8,7 @@ from flask import Flask, render_template, jsonify, send_file
 from werkzeug.wrappers import Response
 
 from .deadbeef import Player, ACTIONS
-from .helpers import nocache
+from .helpers import nocache, rename
 
 
 app = Flask(__name__)
@@ -23,7 +23,7 @@ def status(response: Response, status_code: int) -> Response:
     return response
 
 
-def statusify(func: Callable[[], bool]) -> Callable[[], Response]:
+def responsify(func: Callable[[], bool]) -> Callable[[], Response]:
     """Wrap a function to transform a boolean to a JSON status response."""
     @wraps(func)
     def _wrapper() -> Response:
@@ -88,14 +88,11 @@ def album_cover():
 
 for method in ACTIONS.keys():
     def _make_route(method: str) -> None:
+        @app.route(f"/player/{method}.json", methods=["PATCH"])
+        @responsify
+        @rename(method)
         def _route() -> bool:
             f"""Perform the player {method} action."""
             return getattr(app.config["player"], method)()
-
-        # Set the function name so Flask doesn't have any name collisions
-        _route.__name__ = method
-        # Manually apply decorators because of the above renaming
-        route = statusify(_route)
-        app.route(f"/player/{method}.json", methods=["PATCH"])(route)
 
     _make_route(method)

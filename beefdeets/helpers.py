@@ -55,3 +55,15 @@ def parse_timestamp(timestamp: str) -> Optional[int]:
         int(time_fields["minutes"]) * 60 +
         int(time_fields["seconds"])
     )
+
+
+def rename(new_name: str) -> Callable[[Callable], Callable]:
+    """Rename a function."""
+    def _decorator(func: Callable) -> Callable:
+        def _wrapper(*args, **kwargs):
+            return func(*args, **kwargs)
+
+        _wrapper.__name__ = new_name
+        return _wrapper
+
+    return _decorator
