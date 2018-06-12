@@ -1,7 +1,7 @@
 from setuptools import setup
 from typing import List
 
-from beefdeets import __version__
+from beefdeets.version import __version__
 
 
 def remove_empty(paths: List[str]) -> List[str]:
