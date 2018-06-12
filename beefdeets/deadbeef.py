@@ -9,7 +9,7 @@ from copy import copy
 
 from mutagen import File
 
-from .helpers import catch
+from .helpers import catch, parse_timestamp
 
 
 def arg_to_method(arg: str) -> str:
@@ -132,7 +132,7 @@ class Player(object):
 
         return dict(zip(attrs, result[len(SENTINEL):].split(DIVIDER)))
 
-    def now_playing_values(self, *attrs: str) -> Tuple[str, ...]:
+    def now_playing_values(self, *attrs: str) -> Tuple[Optional[str], ...]:
         """Get ordered values correspondant to the attributes requested.
 
         Arguments
@@ -144,7 +144,7 @@ class Player(object):
         Corresponding values.
         """
         attrs_dict = self.now_playing(*attrs)
-        return tuple([attrs_dict[x] for x in attrs])
+        return tuple([attrs_dict.get(x) for x in attrs])
 
     def enqueue(self, songs: List[str]) -> bool:
         """Add a list of songs to the play queue.
@@ -188,4 +188,20 @@ class Player(object):
             return None
 
         path, directory = self.now_playing_values("full_path", "full_dir")
+
+        if path is None or directory is None:
+            return None
+
         return from_tags(path) or from_pics(path) or from_dir(directory)
+
+    def progress(self) -> float:
+        """Get the percentage of playback progress for the current song."""
+        playback_pos, length = self.now_playing_values("playback_pos", "length")
+
+        if playback_pos is None or length is None:
+            return 0.0
+
+        return 100 * (
+            parse_timestamp(playback_pos) /
+            parse_timestamp(length)
+        )

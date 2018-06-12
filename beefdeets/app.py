@@ -44,12 +44,17 @@ def statusify(func: Callable[[], bool]) -> Callable[[], Response]:
 @app.route("/")
 def index():
     """Index route."""
-    artist, title, album = app.config["player"].now_playing_values(
-        "artist",
-        "title",
-        "album"
+    attrs = app.config["player"].now_playing("artist", "title", "album")
+
+    try:
+        title = f"{attrs['album']} - \"{attrs['title']}\" by {attrs['artist']}"
+    except KeyError:
+        title = "BeeFDeetS"
+
+    return render_template("index.html",
+        title=title,
+        progress=app.config["player"].progress()
     )
-    return render_template("index.html", title=f"{album} - \"{title}\" by {artist}")
 
 
 @app.route("/player/now_playing.json")

@@ -52,6 +52,10 @@ body {
       background-color: #333;
     }
 
+      #display-card .card-footer .progress-bar {
+        transition: width 1.0s linear;
+      }
+
   #cover {
     width: 20em;
     border-radius: 0.5em;
