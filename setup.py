@@ -20,6 +20,12 @@ setup(
     install_requires=remove_empty(open("requirements.txt").read().split("\n")),
     python_requires=">=3.6",
     test_suite="beefdeets.test",
+    package_data={
+        "beefdeets": [
+            "static/*",
+            "templates/*"
+        ]
+    },
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Operating System :: POSIX",
@@ -30,8 +36,6 @@ setup(
         "Topic :: Utilities"
     ],
     entry_points={
-        "console_scripts": [
-            "beefdeets = beefdeets.__main__:main"
-        ]
+        "console_scripts": ["beefdeets = beefdeets.__main__:main"]
     }
 )

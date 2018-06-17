@@ -47,7 +47,7 @@ FORMAT_STRINGS = {
     "version": "V"
 }
 
-SINGLE_ARG_COMMANDS = [
+SINGLE_ARG_COMMANDS = (
     "--toggle-pause",
     "--pause",
     "--next",
@@ -56,7 +56,7 @@ SINGLE_ARG_COMMANDS = [
     "--play",
     "--stop",
     "--play-pause"
-]
+)
 ACTIONS = {arg_to_method(arg): arg for arg in SINGLE_ARG_COMMANDS}
 
 
@@ -83,7 +83,7 @@ class Player(object):
                     Whether the command executed successfully.
                     """
                     return ok(call(
-                        args=[self.path, arg],
+                        args=(self.path, arg),
                         stderr=open(devnull, "w")
                     ))
 
@@ -95,7 +95,7 @@ class Player(object):
     def version(self) -> str:
         """Get the DeaDBeeF version."""
         result: str = check_output(
-            args=[self.path, "--version"],
+            args=(self.path, "--version"),
             stderr=open(devnull, "w")
         ).decode("utf-8")
         match = re.match(r"DeaDBeeF (\d+\.\d+\.\d+)", result)
@@ -123,7 +123,7 @@ class Player(object):
             for attr in attrs
         ])
         result: str = check_output(
-            args=[self.path, "--nowplaying", format_string],
+            args=(self.path, "--nowplaying", format_string),
             stderr=open(devnull, "w")
         ).decode("utf-8")
 
