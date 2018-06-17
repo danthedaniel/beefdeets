@@ -85,8 +85,17 @@
     var percent = 100 * (
       timestamp_seconds(attrs.playback_pos) / timestamp_seconds(attrs.length)
     );
+
+    // Disable the smooth progress bar animation when moving backwards.
+    if (progress > percent) {
+      progress_bar.style.transition = "none";
+    } else {
+      progress_bar.style.transition = progress_transition;
+    }
+
     // progress_bar.textContent = "(" + attrs.playback_pos + " / " + attrs.length + ")";
     progress_bar.style.width = (percent || 0) + "%";
+    progress = percent;
   };
 
   /**
@@ -120,6 +129,8 @@
   var now_playing = document.getElementById("now-playing");
   var progress_bar = document.getElementById("progress");
   var album_cover = document.getElementById("cover");
+  var progress = 0.0;
+  var progress_transition = progress_bar.style.transition;
 
   document.getElementById("prev-button").onclick = function() { API.previous() };
   document.getElementById("pause-button").onclick = function() { API.pause() };
