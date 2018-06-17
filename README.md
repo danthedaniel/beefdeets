@@ -21,6 +21,21 @@ beefdeets
 
 This will start a local webserver on port 8080, bound to 0.0.0.0
 
+
+## Usage
+```
+usage: beefdeets [-h] [host] [port]
+
+Web UI to control DeaDBeeF.
+
+positional arguments:
+  host        Address to bind to.
+  port        Port to bind to.
+
+optional arguments:
+  -h, --help  show this help message and exit
+```
+
 ## Screenshots
 
 ![Screenshot](example/beefdeets.png?raw=true)
