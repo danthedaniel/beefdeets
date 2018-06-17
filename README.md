@@ -5,8 +5,21 @@ A web UI for DeaDBeeF.
 
 Supports Python 3.6+.
 
-Application can be ran with `run.sh` or `python -m beefdeets` if installed as a
-package.
+## Installation
+
+```bash
+git clone https://github.com/teaearlgraycold/beefdeets.git
+cd beefdeets
+python3 setup.py install
+```
+
+## Running
+
+```
+beefdeets
+```
+
+This will start a local webserver on port 8080, bound to 0.0.0.0
 
 ## Screenshots
 
