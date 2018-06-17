@@ -181,8 +181,14 @@ class Player(object):
 
         def from_dir(directory: str) -> Optional[bytes]:
             """Get an album cover from a folder's cover.jpg."""
+            # Try for cover.jpe?g
             for file in listdir(directory):
                 if file.lower() in ["cover.jpg", "cover.jpeg"]:
+                    return open(f"{directory}/{file}", "rb").read()
+
+            # Give up and use any jpeg in the directory
+            for file in listdir(directory):
+                if file.lower().endswith((".jpg", ".jpeg")):
                     return open(f"{directory}/{file}", "rb").read()
 
             return None
