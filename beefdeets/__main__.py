@@ -2,7 +2,7 @@
 
 import sys
 import argparse
-import os.path
+from os.path import isfile
 
 from .app import app
 
@@ -10,18 +10,19 @@ from .app import app
 def start_app(host: str, port: int) -> None:
     deadbeef = app.config["player"].path
 
-    if os.path.isfile(deadbeef):
+    if isfile(deadbeef):
         app.run(host=host, port=port)
     else:
         print(f"DeaDBeeF executable {deadbeef} does not exist", file=sys.stderr)
+        sys.exit(1)
 
 
-def main() -> None:
+def main():
     parser = argparse.ArgumentParser(prog="beefdeets",
         description="Web UI to control DeaDBeeF.")
-    parser.add_argument("host", nargs='?', action="store", type=str,
+    parser.add_argument("host", nargs="?", action="store", type=str,
         default="0.0.0.0", help="Address to bind to.")
-    parser.add_argument("port", nargs='?', action="store", type=int,
+    parser.add_argument("port", nargs="?", action="store", type=int,
         default=8080, help="Port to bind to.")
     args = parser.parse_args()
     start_app(args.host, args.port)

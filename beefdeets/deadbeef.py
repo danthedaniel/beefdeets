@@ -158,7 +158,7 @@ class Player(object):
         Whether the command executed successfully.
         """
         return ok(call(
-            args=[self.path, "--queue", *songs],
+            args=(self.path, "--queue", *songs),
             stderr=open(devnull, "w")
         ))
 
@@ -183,7 +183,7 @@ class Player(object):
             """Get an album cover from a folder's cover.jpg."""
             # Try for cover.jpe?g
             for file in listdir(directory):
-                if file.lower() in ["cover.jpg", "cover.jpeg"]:
+                if file.lower() in ("cover.jpg", "cover.jpeg"):
                     return open(f"{directory}/{file}", "rb").read()
 
             # Give up and use any jpeg in the directory
@@ -207,7 +207,4 @@ class Player(object):
         if playback_pos is None or length is None:
             return 0.0
 
-        return 100 * (
-            parse_timestamp(playback_pos) /
-            parse_timestamp(length)
-        )
+        return 100 * (parse_timestamp(playback_pos) / parse_timestamp(length))
