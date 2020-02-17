@@ -1,7 +1,7 @@
 beefdeets
 ====
 
-A web UI for DeaDBeeF.
+A web UI for [DeaDBeeF](https://deadbeef.sourceforge.io/).
 
 Supports Python 3.6+.
 
